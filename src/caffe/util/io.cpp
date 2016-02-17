@@ -472,6 +472,8 @@ bool ReadSegmentFlowToDatum_KDRF(const string& filename, const string& dir_img, 
 	cv::Mat cv_img_i, cv_img_x, cv_img_y;
 	string* datum_string;
 	char tmp[30];
+  int num_channels_rgb = 3;
+  int num_channels_flow = 2;
 	for (int i = 0; i < offsets.size(); ++i){
 		int offset = offsets[i];
       sprintf(tmp,"image_%04d.jpg",int(1+offset));
@@ -487,8 +489,6 @@ bool ReadSegmentFlowToDatum_KDRF(const string& filename, const string& dir_img, 
         cv_img_i = cv_img_origin_i;
       }
       if (i==0){
-          int num_channels_rgb = 3;
-          int num_channels_flow = 2;
           datum->set_channels((num_channels_rgb + num_channels_flow*length)*offsets.size());
           datum->set_height(cv_img_i.rows);
           datum->set_width(cv_img_i.cols);
@@ -497,9 +497,9 @@ bool ReadSegmentFlowToDatum_KDRF(const string& filename, const string& dir_img, 
           datum->clear_float_data();
           datum_string = datum->mutable_data();
       }
-      for (int c = 0; c < num_channels; ++c) {
-	      for (int h = 0; h < cv_img.rows; ++h) {
-	        for (int w = 0; w < cv_img.cols; ++w) {
+      for (int c = 0; c < num_channels_rgb; ++c) {
+	      for (int h = 0; h < cv_img_i.rows; ++h) {
+	        for (int w = 0; w < cv_img_i.cols; ++w) {
 	          datum_string->push_back(
 	            static_cast<char>(cv_img_i.at<cv::Vec3b>(h, w)[c]));
 	        }
